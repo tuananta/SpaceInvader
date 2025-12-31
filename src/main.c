@@ -1,3 +1,4 @@
+
 // #include <stdio.h>
 // #include <stdlib.h>
 // #include <time.h>
@@ -9,61 +10,58 @@
 
 // bool is_sdl_mode = false;
 
-// int main(int argc, char *argv[]) {
+// int main(int argc, char *argv[]){
 //     srand(time(NULL));
 
-//     // 1. Menu chọn giao diện
+//     // 1. Select UI mode
 //     GameView *view = NULL;
-//     if (argc > 1 && strcmp(argv[1], "-sdl") == 0) {
+//     if(argc > 1 && strcmp(argv[1], "-sdl") == 0){
 //         view = &view_sdl;
 //         is_sdl_mode = true;
-//     } else if (argc > 1 && strcmp(argv[1], "-text") == 0) {
+//     } else if(argc > 1 && strcmp(argv[1], "-text") == 0){
 //         view = &view_ncurses;
 //         is_sdl_mode = false;
 //     } else {
-//         printf("1. Che do Ncurses\n2. Che do SDL3\nLua chon: ");
+//         printf("1. Text mode (Ncurses)\n2. SDL3 mode\nSelect: ");
 //         int choice;
-//         if (scanf("%d", &choice) != 1) choice = 1;
-//         while (getchar() != '\n'); // Xóa bộ nhớ đệm phím Enter
+//         if(scanf("%d", &choice) != 1) choice = 1;
+//         while(getchar() != '\n'); // Flush buffer
 
-//         if (choice == 2) {
+//         if(choice == 2){
 //             view = &view_sdl;
 //             is_sdl_mode = true;
 //         } else {
 //             view = &view_ncurses;
+//             is_sdl_mode = false;
 //         }
 //     }
 
-//     // 2. Khởi tạo
+//     // 2. Setup session
 //     GameState game;
 //     init_game(&game);
 //     view->init();
 
-//     // 3. Game Loop
+//     // 3. Main loop
 //     int running = 1;
-//     while (running) {
-//         // A. XỬ LÝ INPUT (GỌI CONTROLLER)
-//         running = handle_input(&game, is_sdl_mode);
+    
+//     while(running){
+//     running = handle_input(&game, is_sdl_mode);
 
-//         // B. UPDATE MODEL
+//     // Chỉ cập nhật logic nếu game đang chơi
+//     if (game.status == GAME_PLAYING) {
 //         update_game(&game, 0.016f);
-
-//         // C. DRAW VIEW
-//         view->clear_screen();
-//         view->draw(&game);
-//         if (view->update_title) 
-//             view->update_title(game.player.score, game.player.lives);
-
-//         // D. FRAMERATE
-//         usleep(16000); 
 //     }
 
-//     // 4. Giải phóng
+//     view->clear_screen();
+//     view->draw(&game);
+//     usleep(16000); 
+// }
+
+//     // 4. Cleanup resources
 //     view->cleanup();
 //     return 0;
 // }
 
-//ben tren oke
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,13 +72,16 @@
 #include "controller.h"
 #include <string.h>
 
+/* Indicateur du mode d'affichage actuel (SDL ou Ncurses) */
 bool is_sdl_mode = false;
 
 int main(int argc, char *argv[]){
+    /* Initialisation du générateur de nombres aléatoires */
     srand(time(NULL));
 
-    //Select UI mode
+    /* 1. Sélection du mode de l'interface utilisateur (UI) */
     GameView *view = NULL;
+
     if(argc > 1 && strcmp(argv[1], "-sdl") == 0){
         view = &view_sdl;
         is_sdl_mode = true;
@@ -88,44 +89,47 @@ int main(int argc, char *argv[]){
         view = &view_ncurses;
         is_sdl_mode = false;
     } else {
-        printf("1. Text mode\n2. Sdl3 mode\nSelect: ");
+        /* Menu de sélection si aucun argument n'est fourni */
+        printf("1. Mode Texte (Ncurses)\n2. Mode SDL3\nSélection : ");
         int choice;
         if(scanf("%d", &choice) != 1) choice = 1;
-        while(getchar() != '\n'); //Flush buffer
+        while(getchar() != '\n'); // Vider le tampon d'entrée
 
         if(choice == 2){
             view = &view_sdl;
             is_sdl_mode = true;
         } else {
             view = &view_ncurses;
+            is_sdl_mode = false;
         }
     }
 
-    //Setup session
+    /* 2. Configuration de la session de jeu */
     GameState game;
     init_game(&game);
     view->init();
 
-    //Main loop
+    /* 3. Boucle principale du jeu */
     int running = 1;
+    
     while(running){
-        //A.Input processing
+        /* Gestion des entrées utilisateur */
         running = handle_input(&game, is_sdl_mode);
 
-        //B.Logic update
-        update_game(&game, 0.016f);
+        /* Mise à jour de la logique uniquement si le jeu est en cours */
+        if (game.status == GAME_PLAYING) {
+            update_game(&game, 0.016f);
+        }
 
-        //C.Rendering
+        /* Rendu graphique de la scène */
         view->clear_screen();
         view->draw(&game);
-        if(view->update_title) 
-            view->update_title(game.player.score, game.player.lives);
-
-        //D.Lock framerate (~60fps)
+        
+        /* Pause pour stabiliser le taux de rafraîchissement (~60 FPS) */
         usleep(16000); 
     }
 
-    //Cleanup resources
+    /* 4. Nettoyage des ressources et fermeture */
     view->cleanup();
     return 0;
 }
