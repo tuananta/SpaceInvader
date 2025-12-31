@@ -1,36 +1,43 @@
-# Tên file chạy (Output)
+# --- SETTINGS ---
 TARGET = space_invaders_app
-
-# Trình biên dịch
 CC = gcc
-
-# Cờ biên dịch (Lấy header từ SDL3 và thư mục include)
-CFLAGS = -std=c99 -Wall -Wextra -I./include $(shell pkg-config --cflags sdl3)
-
-# Cờ liên kết (Ncurses + Math + SDL3)
+CFLAGS = -std=c99 -Wall -Wextra -D_DEFAULT_SOURCE -I./include $(shell pkg-config --cflags sdl3)
 LDFLAGS = -lncurses -lm $(shell pkg-config --libs sdl3)
 
-# TỰ ĐỘNG tìm tất cả file .c trong thư mục src/
-SRCS = $(wildcard src/*.c)
-# Đổi đuôi .c thành .o để tạo danh sách object
-OBJS = $(SRCS:.c=.o)
+# --- SOURCE DISCOVERY ---
+SRCS = $(wildcard src/*.c) \
+       $(wildcard src/model/*.c) \
+       $(wildcard src/view/*.c) \
+       $(wildcard src/controller/*.c)
 
-# --- QUY TẮC BIÊN DỊCH ---
-
+OBJS = $(patsubst %.c, build/%.o, $(SRCS))
+# 1. make 
 all: $(TARGET)
 
-# Link các file .o thành file chạy
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+	@echo "Build SUCCESS!"
 
-# Compile từng file .c thành .o
-%.o: %.c
+build/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Dọn dẹp file rác
-clean:
-	rm -f src/*.o $(TARGET)
+# 2. make run-ncurses
+run-ncurses: all
+	./$(TARGET) -text
 
-# Chạy game
-run: all
-	./$(TARGET)
+# 3. make run-sdl
+run-sdl: all
+	./$(TARGET) -sdl
+
+# 4. make clean
+clean:
+	rm -rf build $(TARGET)
+	@echo "Cleaned up."
+
+# 5. make valgrind 
+valgrind: all
+	valgrind --leak-check=full --show-leak-kinds=all ./$(TARGET) -text
+
+# --- EXTRA ---
+.PHONY: all clean run-ncurses run-sdl valgrind
