@@ -51,8 +51,13 @@ Le système de fin de partie fonctionne de la manière suivante :
 - Le Score Final du joueur est affiché juste à côté du message "End!".
 
 - À ce stade, l'utilisateur a deux choix : appuyer sur 'R' pour relancer le jeu ou sur 'Q' pour fermer le programme.
- https://github.com/user-attachments/assets/9ef900af-24a1-430d-ac46-43f75b471258
+ 
   
+
+
+https://github.com/user-attachments/assets/2f2c58f5-9de1-4232-94c9-15000195f87e
+
+
 
 
 
