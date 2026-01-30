@@ -21,6 +21,7 @@ Ncurses | 6.0 ou supérieur | Gestion de l'affichage en mode texte.
 Make | 4.0 ou supérieur | Automatisation de la compilation. 
 
 
+
 3. Compilation et Exécution
 Compilation: 
 Ouvrez un terminal dans le dossier racine du projet et exécutez la commande suivante :
@@ -50,7 +51,9 @@ Le système de fin de partie fonctionne de la manière suivante :
 - Le Score Final du joueur est affiché juste à côté du message "End!".
 
 - À ce stade, l'utilisateur a deux choix : appuyer sur 'R' pour relancer le jeu ou sur 'Q' pour fermer le programme.
+ https://github.com/user-attachments/assets/9ef900af-24a1-430d-ac46-43f75b471258
   
+
 
 
 
