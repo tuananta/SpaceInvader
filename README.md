@@ -52,5 +52,6 @@ Le système de fin de partie fonctionne de la manière suivante :
 - À ce stade, l'utilisateur a deux choix : appuyer sur 'R' pour relancer le jeu ou sur 'Q' pour fermer le programme.
   
 
-https://github.com/user-attachments/assets/1aba7938-b03b-4a26-8b29-de9a4ac69d5b
+
+
 
